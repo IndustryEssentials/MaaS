@@ -41,8 +41,8 @@ services:
   infer_server:
     image: pubalglib/inference-server:1.0.0
     volumes:
-      - ${PWD}/infer-server/db:/workspace/inference-server/db
-      - ${PWD}/infer-server/models:/workspace/inference-server/models
+      - ${PWD}/infer-server/db:/workspace/deployment-server/db
+      - ${PWD}/infer-server/models:/workspace/deployment-server/models
     networks:
       - model_master_network
     restart: on-failure:10
