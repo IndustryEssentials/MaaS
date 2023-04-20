@@ -69,12 +69,13 @@ docker compose up -d
 *ps: 系统初始化需要60s左右，请耐心等待。*
 
 ### 4 访问
-在浏览器输入`URL`进行访问：
+假设 `SERVER_HOST_DNS` 是 `192.168.0.100`，`SERVER_HOST_PORT`是`8220`，则可以在浏览器输入`URL`进行访问：
 ```bash
 http://192.168.0.100:8220
 ```
 如果修改了`SERVER_HOST_DNS`或`SERVER_HOST_PORT`，此处的`URL`也需要相应地修改。
 
+如果需要使用API来开发自己的业务系统，可以参考[API使用说明](docs/api.md)。
 
 一切完成，开始工作吧！🍻🍻🍻
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
