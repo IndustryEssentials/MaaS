@@ -35,6 +35,13 @@
 ### 弹性扩展
 平台支持弹性扩展，可以根据实际负载来自动扩展推理服务的实例数量，保证服务的稳定性和性能。同时也支持自动缩减实例数量，以避免资源浪费。
 
+## 界面预览
+![公共算法](docs/public_models.jpg)
+![我的模型](docs/my_models.jpg)
+![API管理](docs/api_mng.jpg)
+![在线试用](docs/trial_api.jpg)
+![批量预测](docs/batch_infer.jpg)
+![批量预测](docs/batch_infer_detail.jpg)
 
 <!-- GETTING STARTED -->
 ## 安装部署
