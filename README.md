@@ -21,7 +21,7 @@
 
 
 
-## 1.1. 主要功能
+## 主要功能
 
 ### 模型管理
 模型管理是平台的核心功能，支持上传、部署、更新和删除模型.用户可以通过界面拉取公共算法模型，平台会将模型转换为可用于推理的格式，并自动部署到推理服务中。用户可以随时更新或删除模型。
@@ -37,9 +37,9 @@
 
 
 <!-- GETTING STARTED -->
-## 一键部署
+## 安装部署
 
-1 clone 本仓库
+### 1 clone 本仓库
 请执行以下命令：
 ```bash
 git clone https://github.com/IndustryEssentials/MaaS.git
@@ -47,7 +47,15 @@ git clone https://github.com/IndustryEssentials/MaaS.git
 cd MaaS
 ```
 
-2 启动
+### 2 配置
+打开`.env`文件，根据实际情况修改配置。
+- `SERVER_HOST_DNS`: 服务使用的`DNS`，请改成服务器的IP地址或域名。
+- `SERVER_HOST_PORT`: 服务使用的端口号，请分配一个未被使用的端口号。
+- `MYSQL_ROOT_PASSWORD`: 数据库`root`用户的密码。
+- `MYSQL_INITIAL_USER`: 数据库初始用户名。
+- `MYSQL_INITIAL_PASSWORD`: 数据库初始用户的密码。
+
+### 3 启动
 ```bash
 docker-compose up -d
 ```
@@ -60,11 +68,13 @@ docker compose up -d
 
 *ps: 系统初始化需要60s左右，请耐心等待。*
 
-3 访问
-
+### 4 访问
+在浏览器输入`URL`进行访问：
 ```bash
-http://localhost:8080
+http://192.168.0.100:8220
 ```
+如果修改了`SERVER_HOST_DNS`或`SERVER_HOST_PORT`，此处的`URL`也需要相应地修改。
+
 
 一切完成，开始工作吧！🍻🍻🍻
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
