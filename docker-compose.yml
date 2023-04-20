@@ -1,85 +1,51 @@
-version: '3.3'
+version: "3.3"
 services:
-  label_nginx:
-    image: labelfree/open_frontend:latest
+  model_master_nginx:
+    image: pubalglib/model-master-nginx:1.0.0
     ports:
-      - "${SERVER_PORT}:80"
-    restart: always
-
-  label_api:
-    image: labelfree/open:latest
-    command: gunicorn --conf /code/config/gunicorn.py  --log-config /code/config/logging.conf --chdir /code/labelfree app:app
+      - ${SERVER_HOST_PORT}:8000
+    networks:
+      - model_master_network
+    restart: on-failure:10
+    depends_on:
+      - model_master_server
+  model_master_server:
+    image: pubalglib/model-master-server:1.0.0
+    environment:
+      SERVER_HOST: ${SERVER_HOST_DNS}:${SERVER_HOST_PORT}
+      MYSQL_DNS: ${MYSQL_INITIAL_USER}:${MYSQL_INITIAL_PASSWORD}@tcp(model_master_db:3306)/model_master_db?charset=utf8mb4&parseTime=True&loc=Local
     volumes:
-      - ./backend_log:/var/log/gunicorn
-    environment:
-      SQLALCHEMY_DATABASE_URI: mysql+pymysql://root:${MYSQL_ROOT_PASSWORD}@label_mysql:3306/labelfree
-      REDIS_HOST: label_redis
-      REDIS_PORT: 6379
-      REDIS_PASSWORD:
-      S3_ENDPOINT_URL: http://label-minio:9000
-      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
-      FLASK_APP: labelfree.app
-      LABEL_ENV: dev
-      LABEL_BUILD: pro
-      LABELFREE_RELEASE: internal
-    restart: always
-
-  label_celery_worker:
-    image: labelfree/open:latest
-    command: celery -A labelfree.app.celery worker -l info -c 4 -B
-    environment:
-      SQLALCHEMY_DATABASE_URI: mysql+pymysql://root:${MYSQL_ROOT_PASSWORD}@label_mysql:3306/labelfree
-      REDIS_HOST: label_redis
-      REDIS_PASSWORD:
-      S3_ENDPOINT_URL: http://label-minio:9000
-      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
-      FLASK_APP: labelfree.app
-      LABEL_ENV: dev
-    restart: always
-
-  label_seg:
-    image: labelfree/open_seg:latest
-    command: gunicorn --conf /code/config/gunicorn.py  --log-config /code/config/logging.conf --chdir /code/segmentation app:app
-    volumes:
-      - ./seg_log:/var/log/gunicorn
-    environment:
-      FLASK_APP: labelfree.app
-      SEG_DEBUG: "false"
-      G_MAX_REQUESTS: 100
-      G_MAX_REQUESTS_JITTER: 10
-      SERVER_RUNTIME: "runc"
-    restart: always
-
-  label_mysql:
-    image: mysql:5.7.22
+      - ${PWD}/model-master-server/logs:/app/logs
+      - ${PWD}/model-master-server/data/cas:/app/.cas
+      - ${PWD}/model-master-server/data/kvs:/app/.kvs
+    depends_on:
+      - model_master_db
+      - infer_server
+    restart: on-failure:10
+    networks:
+      - model_master_network
+  model_master_db:
+    image: mysql:8
     environment:
       TZ: Asia/Shanghai
-      MYSQL_ROOT_PASSWORD:
-      MYSQL_DATABASE: labelfree
-    command: --character-set-server=utf8mb4
-      --collation-server=utf8mb4_general_ci
-      --explicit_defaults_for_timestamp=true
-      --lower_case_table_names=1
-      --max_allowed_packet=128M
-      --max_connections=1000
-      --sql-mode="STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: model_master_db
+      MYSQL_USER: ${MYSQL_INITIAL_USER}
+      MYSQL_PASSWORD: ${MYSQL_INITIAL_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
     volumes:
-      - ./mysql_data:/var/lib/mysql
-    restart: always
+      - ${PWD}/model-master-db/data:/var/lib/mysql
+    networks:
+      - model_master_network
+    restart: on-failure:10
+  infer_server:
+    image: pubalglib/inference-server:1.0.0
+    volumes:
+      - ${PWD}/infer-server/db:/workspace/inference-server/db
+      - ${PWD}/infer-server/models:/workspace/inference-server/models
+    networks:
+      - model_master_network
+    restart: on-failure:10
 
-  label_redis:
-    image: redis:5.0.4
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
-    volumes:
-      - ./redis-data:/data
-    restart: always
-    
-  label-minio:
-    image: quay.io/minio/minio:RELEASE.2022-11-11T03-44-20Z
-    environment:
-      MINIO_ROOT_PASSWORD:
-      MINIO_ROOT_USER: labelfree
-    command: server /data --console-address ":9001"
-    volumes:
-      - ./minio_data:/data
-    restart: always
+networks:
+  model_master_network:
