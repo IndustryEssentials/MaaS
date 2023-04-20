@@ -1,7 +1,7 @@
 <a name="readme-top"></a>
 
 <!-- PROJECT LOGO -->
-<br />
+
 <div align="center">
 
 
@@ -10,22 +10,21 @@
   <p align="center">
      MaaS 是一款基于云计算技术的AI服务，支持模型管理、模型推理API生成和在线API使用等功能，旨在帮助用户快速部署和使用深度学习模型，提高模型的生产效率和推理性能。
     <br />
-    <a href="https://labelfree.gitee.io/labelfree_doc/"><strong>文档 »</strong></a>
     <br />
     <br />
     ·
-    <a href="https://github.com/IndustryEssentials/label-free/issues">反馈</a>
+    <a href="https://github.com/IndustryEssentials/MaaS/issues">反馈</a>
     ·
-    <a href="https://github.com/IndustryEssentials/label-free/issues">讨论</a>
+    <a href="https://github.com/IndustryEssentials/MaaS/issues">讨论</a>
   </p>
 </div>
 
 
 
-## 1.1. 主要功能
+## 主要功能
 
 ### 模型管理
-模型管理是平台的核心功能，支持上传、部署、更新和删除模型，同时也支持版本管理功能。用户可以通过界面或API上传模型，并指定模型的参数和超参数，平台会将模型转换为可用于推理的格式，并自动部署到推理服务中。用户可以随时更新或删除模型，同时也可以查看历史版本和差异。
+模型管理是平台的核心功能，支持上传、部署、更新和删除模型.用户可以通过界面拉取公共算法模型，平台会将模型转换为可用于推理的格式，并自动部署到推理服务中。用户可以随时更新或删除模型。
 
 ### API生成
 平台支持将训练好的模型部署为RESTful API，支持在线调用和批量调用。平台会自动根据模型生成API接口，并提供文档和SDK供用户使用。
@@ -38,17 +37,25 @@
 
 
 <!-- GETTING STARTED -->
-## 一键部署
+## 安装部署
 
-1 clone 本仓库
+### 1 clone 本仓库
 请执行以下命令：
 ```bash
-git clone https://github.com/IndustryEssentials/label-free.git
+git clone https://github.com/IndustryEssentials/MaaS.git
 
-cd label-free
+cd MaaS
 ```
 
-2 启动
+### 2 配置
+打开`.env`文件，根据实际情况修改配置。
+- `SERVER_HOST_DNS`: 服务使用的`DNS`，请改成服务器的IP地址或域名。
+- `SERVER_HOST_PORT`: 服务使用的端口号，请分配一个未被使用的端口号。
+- `MYSQL_ROOT_PASSWORD`: 数据库`root`用户的密码。
+- `MYSQL_INITIAL_USER`: 数据库初始用户名。
+- `MYSQL_INITIAL_PASSWORD`: 数据库初始用户的密码。
+
+### 3 启动
 ```bash
 docker-compose up -d
 ```
@@ -61,20 +68,14 @@ docker compose up -d
 
 *ps: 系统初始化需要60s左右，请耐心等待。*
 
-3 访问
-
+### 4 访问
+假设 `SERVER_HOST_DNS` 是 `192.168.0.100`，`SERVER_HOST_PORT`是`8220`，则可以在浏览器输入`URL`进行访问：
 ```bash
-http://localhost:8080
+http://192.168.0.100:8220
 ```
+如果修改了`SERVER_HOST_DNS`或`SERVER_HOST_PORT`，此处的`URL`也需要相应地修改。
 
-默认管理员账号、密码：
-
-
-```
-labelfree@viesc.com
-labelfree@2022
-```
-*如发现无法新建项目，请确认使用的是默认管理员账号登陆。*
+如果需要使用API来开发自己的业务系统，可以参考[API使用说明](docs/api.md)。
 
 一切完成，开始工作吧！🍻🍻🍻
 <p align="right">(<a href="#readme-top">返回顶部</a>)</p>
